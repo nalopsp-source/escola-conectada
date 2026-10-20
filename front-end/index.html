@@ -1,0 +1,1058 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escola Conectada - Portal Escolar</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="screen active">
+    <div class="login-left">
+      <div class="login-left-content">
+        <div class="app-icon">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+
+        <h1 class="serif-title">Escola<br><em>Conectada.</em></h1>
+        <p class="login-subtitle">Conectando conhecimento, escola e oportunidades.</p>
+        <p class="login-subtext">Aprender fica mais fácil quando todos têm acesso ao conhecimento.</p>
+
+        <div class="subject-tags-login">
+          <span class="tag"><i class="fa-solid fa-calculator"></i> Matemática</span>
+          <span class="tag"><i class="fa-solid fa-book"></i> Português</span>
+          <span class="tag"><i class="fa-solid fa-flask"></i> Ciências</span>
+          <span class="tag"><i class="fa-solid fa-earth-americas"></i> Geografia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-form-container">
+        <h2 class="serif-title">Bem-vindo de volta</h2>
+        <p class="form-desc">Selecione seu perfil para acessar o portal escolar.</p>
+
+        <div class="role-selector mb-4">
+          <button type="button" class="role-btn active" data-role="aluno" onclick="setRole('aluno')">
+            <i class="fa-solid fa-user-graduate"></i> Aluno
+          </button>
+
+          <button type="button" class="role-btn" data-role="professor" onclick="setRole('professor')">
+            <i class="fa-solid fa-chalkboard-user"></i> Professor
+          </button>
+
+          <button type="button" class="role-btn" data-role="coordenador" onclick="setRole('coordenador')">
+            <i class="fa-solid fa-user-tie"></i> Coordenador
+          </button>
+        </div>
+
+        <div class="quick-login-box">
+          <small class="text-muted d-block mb-2">Preencher dados de demonstração:</small>
+
+          <div class="quick-btns">
+            <button type="button" class="btn-quick" onclick="quickLogin('aluno')">João — Aluno</button>
+            <button type="button" class="btn-quick" onclick="quickLogin('professor')">Miguel — Professor</button>
+            <button type="button" class="btn-quick" onclick="quickLogin('coordenador')">Ana — Coordenação</button>
+          </div>
+        </div>
+
+        <div class="divider"><span>ou digite seus dados</span></div>
+
+        <form id="form-login" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <div class="input-wrapper">
+              <i class="fa-regular fa-envelope input-icon"></i>
+              <input type="email" id="email" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="password">Senha</label>
+
+              <a href="#" class="forgot-pass"
+                 onclick="event.preventDefault(); showToast('A recuperação de senha precisa ser configurada no sistema.', 'info')">
+                Esqueci minha senha
+              </a>
+            </div>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="password" autocomplete="current-password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary btn-block">
+            <i class="fa-solid fa-right-to-bracket"></i> Entrar no Portal
+          </button>
+        </form>
+
+        <div class="divider"><span>novo aluno?</span></div>
+
+        <button type="button" class="btn-outline btn-block" onclick="openCadastroAluno()">
+          <i class="fa-solid fa-user-plus"></i> Criar conta de aluno
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTAL -->
+  <div id="app-layout" class="app-layout hidden">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="app-icon sm">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+
+          <div>
+            <h2 class="serif-title logo-text">Escola<br>Conectada</h2>
+            <span class="portal-badge" id="role-badge">Portal Escolar</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-menu"></nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="btn-logout" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair / Trocar Conta
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="tab-content">
+        <div class="hero-banner">
+          <div class="hero-content">
+            <span class="hero-label">PORTAL ESCOLAR</span>
+            <h1 class="serif-title">Seu aprendizado,<br><em>sempre conectado.</em></h1>
+            <p>Acompanhe suas aulas, consulte suas notas e mantenha seus dados escolares organizados.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
+            <div class="stat-val" id="stat-aulas-val">0</div>
+            <div class="stat-lbl">Aulas disponíveis</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-val" id="stat-media-val">—</div>
+            <div class="stat-lbl">Média escolar</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange"><i class="fa-solid fa-bookmark"></i></div>
+            <div class="stat-val" id="stat-materias-val">0</div>
+            <div class="stat-lbl">Matérias</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">ROTINA ESCOLAR</span>
+            <h2 class="serif-title">Atividades recentes</h2>
+          </div>
+
+          <button type="button" class="btn-outline" onclick="switchTab('atividades')">
+            Ver atividades <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="cards-grid grid-2" id="dashboard-atividades">
+          <div class="card">
+            <div class="stat-icon orange">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <h3 class="card-subtitle mt-4">Suas atividades</h3>
+            <p>Consulte as atividades publicadas pelos professores, confira os prazos e acompanhe suas entregas.</p>
+            <button type="button" class="btn-primary mt-4" onclick="switchTab('atividades')">
+              <i class="fa-solid fa-book-open"></i> Acessar atividades
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="stat-icon green">
+              <i class="fa-solid fa-check-double"></i>
+            </div>
+            <h3 class="card-subtitle mt-4">Acompanhe suas entregas</h3>
+            <p>Organize sua rotina e verifique quais atividades ainda precisam ser concluídas.</p>
+            <button type="button" class="btn-outline mt-4" onclick="switchTab('atividades')">
+              Ver pendências
+            </button>
+          </div>
+        </div>
+
+        <div class="section-header mt-6">
+          <div>
+            <span class="section-kicker">ACOMPANHAMENTO ESCOLAR</span>
+            <h2 class="serif-title">Resumo acadêmico</h2>
+          </div>
+        </div>
+
+        <div class="cards-grid grid-2">
+          <div class="card">
+            <h3 class="card-subtitle">Meu boletim</h3>
+            <p>Consulte suas notas e médias por disciplina.</p>
+            <button type="button" class="btn-primary mt-4" onclick="switchTab('boletim')">
+              <i class="fa-solid fa-chart-column"></i> Consultar notas
+            </button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-subtitle">Meu progresso</h3>
+            <p>Acompanhe seu desempenho acadêmico no portal.</p>
+            <button type="button" class="btn-primary mt-4" onclick="switchTab('progresso')">
+              <i class="fa-solid fa-arrow-trend-up"></i> Ver progresso
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ATIVIDADES DO ALUNO -->
+      <section id="tab-atividades" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">ENSINO E APRENDIZAGEM</span>
+          <h1 class="serif-title">Atividades escolares</h1>
+          <p>Consulte propostas, organize seus prazos e acompanhe o andamento das atividades.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div class="stat-val" id="ativ-total">0</div>
+            <div class="stat-lbl">Total de atividades</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-val" id="ativ-pendentes">0</div>
+            <div class="stat-lbl">Pendentes</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-val" id="ativ-concluidas">0</div>
+            <div class="stat-lbl">Concluídas</div>
+          </div>
+        </div>
+
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Lista de atividades</h2>
+              <p>Filtre as atividades por matéria ou situação.</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="filtro-atividade-materia">Matéria</label>
+              <select id="filtro-atividade-materia" class="input-styled">
+                <option value="">Todas as matérias</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Português">Português</option>
+                <option value="Ciências">Ciências</option>
+                <option value="História">História</option>
+                <option value="Geografia">Geografia</option>
+                <option value="Inglês">Inglês</option>
+                <option value="Artes">Artes</option>
+                <option value="Educação Física">Educação Física</option>
+                <option value="Biologia">Biologia</option>
+                <option value="Física">Física</option>
+                <option value="Química">Química</option>
+              </select>
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="filtro-atividade-status">Situação</label>
+              <select id="filtro-atividade-status" class="input-styled">
+                <option value="">Todas as situações</option>
+                <option value="pendente">Pendente</option>
+                <option value="entregue">Entregue</option>
+                <option value="corrigida">Corrigida</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="atividades-lista" class="list-container">
+            <div class="empty-state">
+              <i class="fa-solid fa-folder-open"></i>
+              <h3>Nenhuma atividade carregada</h3>
+              <p>Quando as atividades forem cadastradas, elas aparecerão nesta área.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESPOSTA DO ALUNO -->
+        <div class="card mt-6" id="atividade-resposta-card">
+          <div class="card-header">
+            <div>
+              <h2>Responder atividade</h2>
+              <p>Selecione uma atividade para visualizar as instruções e registrar sua resposta.</p>
+            </div>
+          </div>
+
+          <form id="form-responder-atividade" onsubmit="handleResponderAtividade(event)">
+            <input type="hidden" id="resposta-atividade-id">
+
+            <div class="form-group">
+              <label for="resposta-atividade-titulo">Atividade selecionada</label>
+              <input
+                type="text"
+                id="resposta-atividade-titulo"
+                class="input-styled"
+                placeholder="Selecione uma atividade na lista"
+                readonly
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="resposta-atividade-texto">Sua resposta</label>
+              <textarea
+                id="resposta-atividade-texto"
+                class="input-styled"
+                rows="6"
+                placeholder="Escreva sua resposta aqui..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="resposta-atividade-arquivo">Anexar arquivo (opcional)</label>
+              <input
+                type="file"
+                id="resposta-atividade-arquivo"
+                class="input-styled"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              >
+              <small>O envio permanente do arquivo dependerá da integração com o servidor.</small>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-paper-plane"></i> Enviar resposta
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- BOLETIM DO ALUNO -->
+      <section id="tab-boletim" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">DESEMPENHO ACADÊMICO</span>
+          <h1 class="serif-title">Meu Boletim</h1>
+          <p>Consulte suas notas e acompanhe seu desempenho nas matérias escolares.</p>
+        </div>
+
+        <div class="stats-grid boletim-stats">
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-val" id="boletim-media-geral">0,0</div>
+            <div class="stat-lbl">Média geral</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-val" id="boletim-aprovadas">0</div>
+            <div class="stat-lbl">Matérias aprovadas</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-val" id="boletim-recuperacao">0</div>
+            <div class="stat-lbl">Em recuperação</div>
+          </div>
+        </div>
+
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Notas por matéria</h2>
+              <p>As notas devem ser lançadas pelos professores responsáveis.</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Matéria</th>
+                  <th>1º Bimestre</th>
+                  <th>2º Bimestre</th>
+                  <th>3º Bimestre</th>
+                  <th>4º Bimestre</th>
+                  <th>Média</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+
+              <tbody id="boletim-notas-list">
+                <tr>
+                  <td colspan="7">As notas aparecerão aqui quando forem carregadas pelo sistema.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mt-6">
+          <h3 class="card-subtitle">Como funciona o boletim?</h3>
+          <p>O boletim apresenta as notas por bimestre, a média calculada e a situação de cada matéria.</p>
+        </div>
+      </section>
+
+      <!-- PROGRESSO -->
+      <section id="tab-progresso" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">SEU DESEMPENHO</span>
+          <h1 class="serif-title">Meu Progresso</h1>
+          <p>Acompanhe seu desempenho acadêmico e suas matérias.</p>
+        </div>
+
+        <div class="card progress-overview-card">
+          <div class="donut-container">
+            <svg class="donut-chart" viewBox="0 0 36 36">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <path class="circle" id="donut-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            </svg>
+
+            <div class="donut-center">
+              <span class="percentage" id="progress-percent-lbl">0%</span>
+              <span class="label">progresso</span>
+            </div>
+          </div>
+
+          <div class="progress-stats">
+            <div class="stat-item">
+              <i class="fa-solid fa-book icon-purple"></i>
+              <div class="val" id="prog-stat-aulas">0</div>
+              <div class="lbl">Aulas</div>
+            </div>
+
+            <div class="stat-item">
+              <i class="fa-solid fa-bookmark icon-green"></i>
+              <div class="val" id="prog-stat-concluidas">0</div>
+              <div class="lbl">Matérias</div>
+            </div>
+
+            <div class="stat-item">
+              <i class="fa-solid fa-chart-line icon-orange"></i>
+              <div class="val" id="prog-stat-pendentes">0</div>
+              <div class="lbl">Notas lançadas</div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="serif-title mt-6">Desempenho por matéria</h2>
+        <div class="cards-grid grid-2 mt-4" id="progresso-materias-grid"></div>
+      </section>
+
+      <!-- ACESSO OFFLINE -->
+      <section id="tab-offline" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">ACESSIBILIDADE</span>
+          <h1 class="serif-title">Acesso offline</h1>
+          <p>Consulte os conteúdos escolares salvos mesmo quando a conexão estiver limitada.</p>
+        </div>
+
+        <div class="offline-status-card">
+          <div class="status-left">
+            <div class="wifi-icon" id="wifi-status-icon">
+              <i class="fa-solid fa-wifi"></i>
+            </div>
+
+            <div>
+              <div class="status-title" id="wifi-status-title">Verificando conexão</div>
+              <div class="status-subtitle" id="wifi-last-sync">Última sincronização: ainda não realizada</div>
+            </div>
+          </div>
+
+          <div class="status-right">
+            <button type="button" class="btn-outline-red" onclick="limparOffline()">
+              <i class="fa-solid fa-trash"></i> Limpar dados
+            </button>
+
+            <button type="button" class="btn-dark" onclick="sincronizarOffline()">
+              <i class="fa-solid fa-rotate"></i> Sincronizar
+            </button>
+          </div>
+        </div>
+
+        <div class="offline-tabs">
+          <button type="button" class="off-tab active" onclick="switchOfflineSubTab('conteudos', this)">
+            Conteúdos salvos <span id="off-count-ativ">(0)</span>
+          </button>
+        </div>
+
+        <div class="list-container" id="offline-list-container"></div>
+      </section>
+
+      <!-- PERFIL -->
+      <section id="tab-perfil" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">CONTA</span>
+          <h1 class="serif-title">Meu Perfil</h1>
+          <p>Consulte suas informações de conta e dados acadêmicos.</p>
+        </div>
+
+        <div class="card profile-header-card">
+          <div class="avatar-lg" id="profile-avatar-box">AC</div>
+
+          <div class="profile-info">
+            <div class="name-row">
+              <h2 class="serif-title" id="profile-name-text">Usuário</h2>
+              <i class="fa-solid fa-pen edit-icon" onclick="openEditProfileModal()" title="Editar dados"></i>
+            </div>
+
+            <div class="email-row">
+              <i class="fa-regular fa-envelope"></i>
+              <span id="profile-email-text">—</span>
+            </div>
+
+            <span class="badge-role" id="profile-role-tag">Aluno</span>
+            <p id="profile-ra-text">RM: 386952</p>
+          </div>
+        </div>
+
+        <div class="card mt-6">
+          <div class="progress-title-row">
+            <span class="bold">Progresso acadêmico</span>
+            <span class="bold text-muted" id="profile-general-pct-text">0%</span>
+          </div>
+
+          <div class="progress-bar-bg mt-2">
+            <div class="progress-bar-fill" id="profile-general-bar-fill" style="width:0%"></div>
+          </div>
+
+          <div class="subtext mt-2" id="profile-general-subtext">Consulte seu boletim para acompanhar suas notas.</div>
+        </div>
+
+        <div class="card mt-6">
+          <h3 class="card-subtitle">Matérias do portal</h3>
+          <div class="subject-tags-profile mt-4" id="profile-subjects-container"></div>
+        </div>
+      </section>
+
+      <!-- PROFESSOR: ATIVIDADES -->
+      <section id="tab-prof-atividades" class="tab-content">
+
+        <div class="page-header">
+          <span class="section-kicker">ENSINO E APRENDIZAGEM</span>
+          <h1 class="serif-title">Gerenciar atividades</h1>
+          <p>Publique atividades, acompanhe as entregas e corrija as respostas dos estudantes.</p>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <div class="stat-val" id="prof-ativ-total">0</div>
+            <div class="stat-lbl">Atividades publicadas</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-val" id="prof-ativ-entregas">0</div>
+            <div class="stat-lbl">Entregas recebidas</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div class="stat-val" id="prof-ativ-corrigidas">0</div>
+            <div class="stat-lbl">Atividades corrigidas</div>
+          </div>
+        </div>
+
+        <!-- PUBLICAR ATIVIDADE -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Publicar nova atividade</h2>
+              <p>Preencha os dados abaixo para disponibilizar a atividade aos alunos.</p>
+            </div>
+          </div>
+
+          <form id="form-nova-atividade" onsubmit="handleNovaAtividadeSubmit(event)">
+
+            <div class="form-group">
+              <label for="new-ativ-title">Título da atividade</label>
+              <input
+                type="text"
+                id="new-ativ-title"
+                class="input-styled"
+                maxlength="150"
+                placeholder="Ex.: Exercícios de revisão"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="new-ativ-description">Descrição e instruções</label>
+              <textarea
+                id="new-ativ-description"
+                class="input-styled"
+                rows="5"
+                placeholder="Explique o que os alunos precisam fazer..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="new-ativ-subject">Matéria</label>
+                <select id="new-ativ-subject" class="input-styled" required>
+                  <option value="">Selecione a matéria</option>
+                  <option value="Matemática">Matemática</option>
+                  <option value="Português">Português</option>
+                  <option value="Ciências">Ciências</option>
+                  <option value="História">História</option>
+                  <option value="Geografia">Geografia</option>
+                  <option value="Inglês">Inglês</option>
+                  <option value="Artes">Artes</option>
+                  <option value="Educação Física">Educação Física</option>
+                  <option value="Biologia">Biologia</option>
+                  <option value="Física">Física</option>
+                  <option value="Química">Química</option>
+                </select>
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="new-ativ-type">Tipo de atividade</label>
+                <select id="new-ativ-type" class="input-styled" required>
+                  <option value="">Selecione o tipo</option>
+                  <option value="Exercício">Exercício</option>
+                  <option value="Trabalho">Trabalho</option>
+                  <option value="Pesquisa">Pesquisa</option>
+                  <option value="Projeto">Projeto</option>
+                  <option value="Avaliação">Avaliação</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="new-ativ-date">Data de entrega</label>
+                <input
+                  type="date"
+                  id="new-ativ-date"
+                  class="input-styled"
+                  required
+                >
+              </div>
+             <div class="form-group flex-1">
+                <label for="new-ativ-turma">turma</label>
+                <input
+                  type="turma"
+                  id="new-ativ-turma"
+                  class="input-styled"
+                  
+                >
+              <div class="form-group flex-1">
+                <label for="new-ativ-points">Pontuação máxima</label>
+                <input
+                  type="number"
+                  id="new-ativ-points"
+                  class="input-styled"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                  value="10"
+                  required
+                >
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-plus"></i>
+              Publicar atividade
+            </button>
+
+          </form>
+        </div>
+
+        <!-- ATIVIDADES PUBLICADAS -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Atividades publicadas</h2>
+              <p>Consulte as atividades cadastradas nesta demonstração.</p>
+            </div>
+          </div>
+
+          <div id="prof-atividades-lista" class="list-container">
+            <div class="empty-state">
+              <i class="fa-solid fa-clipboard-list"></i>
+              <h3>Nenhuma atividade cadastrada</h3>
+              <p>As atividades publicadas aparecerão aqui.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESPOSTAS DOS ALUNOS -->
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Entregas dos alunos</h2>
+              <p>Visualize as respostas recebidas e confira quais precisam de correção.</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Aluno</th>
+                  <th>Atividade</th>
+                  <th>Data de entrega</th>
+                  <th>Resposta</th>
+                  <th>Nota</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+
+              <tbody id="prof-respostas-lista">
+                <tr>
+                  <td colspan="6">
+                    As respostas aparecerão aqui quando os alunos enviarem suas atividades.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PROFESSOR: NOTAS -->
+      <section id="tab-prof-notas" class="tab-content">
+
+        <div class="page-header">
+          <span class="section-kicker">ÁREA DO PROFESSOR</span>
+          <h1 class="serif-title">Acompanhamento de notas</h1>
+          <p>Consulte e acompanhe o desempenho acadêmico dos estudantes.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Registro de notas e frequência</h2>
+              <p>Consulte os dados acadêmicos disponíveis no sistema.</p>
+            </div>
+          </div>
+
+          <div id="prof-notas-container" class="table-responsive mt-4">
+            <p>Os alunos e as disciplinas aparecerão aqui conforme os dados disponíveis no sistema.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- COORDENAÇÃO: DASHBOARD -->
+      <section id="tab-coord-dashboard" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">COORDENAÇÃO</span>
+          <h1 class="serif-title">Painel da Coordenação</h1>
+          <p>Acompanhe usuários, matérias, atividades e a estrutura escolar.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-val" id="coord-total-alunos">0</div>
+            <div class="stat-lbl">Alunos ativos</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-chalkboard-user"></i></div>
+            <div class="stat-val" id="coord-total-professores">0</div>
+            <div class="stat-lbl">Professores</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange"><i class="fa-solid fa-book-open"></i></div>
+            <div class="stat-val" id="coord-total-aulas">0</div>
+            <div class="stat-lbl">Aulas cadastradas</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="stat-val" id="coord-total-materias">0</div>
+            <div class="stat-lbl">Matérias</div>
+          </div>
+        </div>
+
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Acompanhamento de atividades</h2>
+              <p>Consulte a quantidade de atividades e o andamento das entregas.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon purple"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div class="stat-val" id="coord-total-atividades">0</div>
+              <div class="stat-lbl">Atividades cadastradas</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div>
+              <div class="stat-val" id="coord-ativ-pendentes">0</div>
+              <div class="stat-lbl">Entregas pendentes</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div>
+              <div class="stat-val" id="coord-ativ-entregues">0</div>
+              <div class="stat-lbl">Entregas realizadas</div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary mt-4" onclick="switchTab('coord-atividades')">
+            <i class="fa-solid fa-list-check"></i> Acompanhar atividades
+          </button>
+        </div>
+
+        <div class="card mt-6">
+          <div class="card-header">
+            <div>
+              <h2>Resumo dos usuários</h2>
+              <p>Acesse a área de gerenciamento para consultar os cadastros.</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary mt-4" onclick="switchTab('coord-usuarios')">
+            <i class="fa-solid fa-users-gear"></i> Gerenciar usuários
+          </button>
+        </div>
+      </section>
+
+      <!-- COORDENAÇÃO: ATIVIDADES -->
+      <section id="tab-coord-atividades" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">GESTÃO PEDAGÓGICA</span>
+          <h1 class="serif-title">Acompanhamento de atividades</h1>
+          <p>Visualize as atividades cadastradas e acompanhe as entregas.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Atividades da escola</h2>
+              <p>Filtre e consulte as atividades disponíveis.</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="coord-filtro-materia">Filtrar por matéria</label>
+              <select id="coord-filtro-materia" class="input-styled">
+                <option value="">Todas as matérias</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Português">Português</option>
+                <option value="Ciências">Ciências</option>
+                <option value="História">História</option>
+                <option value="Geografia">Geografia</option>
+                <option value="Inglês">Inglês</option>
+                <option value="Artes">Artes</option>
+                <option value="Educação Física">Educação Física</option>
+                <option value="Biologia">Biologia</option>
+                <option value="Física">Física</option>
+                <option value="Química">Química</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="list-container" id="coord-atividades-lista">
+            <div class="empty-state">
+              <i class="fa-solid fa-folder-open"></i>
+              <h3>Nenhuma atividade carregada</h3>
+              <p>As atividades cadastradas serão listadas aqui.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COORDENAÇÃO: MATÉRIAS -->
+      <section id="tab-coord-materias" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">CURRÍCULO</span>
+          <h1 class="serif-title">Matérias</h1>
+          <p>Componentes curriculares disponíveis no portal.</p>
+        </div>
+
+        <div class="card">
+          <div class="subjects-grid" id="coord-materias-list"></div>
+        </div>
+      </section>
+
+      <!-- COORDENAÇÃO: USUÁRIOS -->
+      <section id="tab-coord-usuarios" class="tab-content">
+        <div class="page-header">
+          <span class="section-kicker">ADMINISTRAÇÃO</span>
+          <h1 class="serif-title">Gerenciar usuários</h1>
+          <p>Consulte os usuários cadastrados na plataforma.</p>
+        </div>
+
+        <div class="card mb-6">
+          <h3 class="card-subtitle mb-4">Adicionar usuário</h3>
+
+          <form id="form-novo-usuario" onsubmit="handleNovoUsuarioSubmit(event)">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="new-user-name">Nome completo</label>
+                <input type="text" id="new-user-name" required class="input-styled" placeholder="Nome do usuário">
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="new-user-email">E-mail</label>
+                <input type="email" id="new-user-email" required class="input-styled" placeholder="email@escola.com">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="new-user-role">Função</label>
+                <select id="new-user-role" class="input-styled" required>
+                  <option value="aluno">Aluno</option>
+                  <option value="professor">Professor</option>
+                </select>
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="new-user-password">Senha temporária</label>
+                <input type="password" id="new-user-password" class="input-styled" minlength="8" autocomplete="new-password" placeholder="Mínimo de 8 caracteres">
+              </div>
+            </div>
+
+            <div class="form-group" id="new-user-ra-group">
+              <label for="new-user-ra">RM do aluno</label>
+              <input type="text" id="new-user-ra" class="input-styled" placeholder="Registro de matrícula">
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-user-plus"></i> Cadastrar usuário
+            </button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 class="card-subtitle mb-4">Usuários cadastrados</h3>
+
+          <div class="table-responsive">
+            <table class="styled-table" id="table-coord-users">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Função</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: CADASTRO DO ALUNO -->
+  <div id="modal-cadastro-aluno" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button type="button" class="modal-close" onclick="closeModal('modal-cadastro-aluno')">&times;</button>
+
+      <div class="modal-header">
+        <h2 class="serif-title">Criar conta de aluno</h2>
+        <p>Preencha seus dados para criar sua conta no portal.</p>
+      </div>
+
+      <div class="modal-body">
+        <form id="form-cadastro-aluno" onsubmit="handleCadastroAlunoSubmit(event)">
+          <div class="form-group">
+            <label for="cadastro-nome">Nome completo</label>
+            <input type="text" id="cadastro-nome" class="input-styled" required autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="cadastro-email">E-mail</label>
+            <input type="email" id="cadastro-email" class="input-styled" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="cadastro-senha">Senha</label>
+            <input type="password" id="cadastro-senha" class="input-styled" required minlength="8" autocomplete="new-password">
+            <small>Use pelo menos 8 caracteres.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="cadastro-ra">RM (Registro de Matrícula)</label>
+            <input type="text" id="cadastro-ra" class="input-styled" required>
+          </div>
+
+          <button type="submit" class="btn-primary btn-block">
+            <i class="fa-solid fa-user-plus"></i> Criar minha conta
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR PERFIL -->
+  <div id="modal-edit-profile" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button type="button" class="modal-close" onclick="closeModal('modal-edit-profile')">&times;</button>
+
+      <div class="modal-header">
+        <h2 class="serif-title">Editar meu perfil</h2>
+      </div>
+
+      <div class="modal-body">
+        <form id="form-edit-profile" onsubmit="handleSaveProfile(event)">
+          <div class="form-group">
+            <label for="edit-profile-name">Nome completo</label>
+            <input type="text" id="edit-profile-name" class="input-styled" required>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-profile-email">E-mail</label>
+            <input type="email" id="edit-profile-email" class="input-styled" required>
+          </div>
+
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn-outline" onclick="closeModal('modal-edit-profile')">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
